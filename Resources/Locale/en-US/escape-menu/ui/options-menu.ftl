@@ -6,6 +6,7 @@ ui-options-tab-controls = Controls
 ui-options-tab-audio = Audio
 ui-options-tab-network = Network
 ui-options-tab-misc = General
+ui-options-tab-accessibility = Accessibility
 
 ui-options-apply = Apply
 ui-options-reset-all = Reset All
@@ -19,7 +20,12 @@ ui-options-general-discord = Discord
 ui-options-general-cursor = Cursor
 ui-options-general-speech = Speech
 ui-options-general-storage = Storage
-ui-options-general-accessibility = Accessibility
+
+## Accessibility menu
+
+ui-options-reduced-motion = Reduce motion of visual effects
+ui-options-screen-shake-intensity = Screen shake intensity
+ui-options-screen-shake-percent = { TOSTRING($intensity, "P0") }
 
 ## Audio menu
 
@@ -46,9 +52,6 @@ ui-options-show-looc-on-head = Show LOOC chat above characters head
 ui-options-fancy-speech = Show names in speech bubbles
 ui-options-fancy-name-background = Add background to speech bubble names
 ui-options-enable-color-name = Add colors to character names
-ui-options-reduced-motion = Reduce motion of visual effects
-ui-options-screen-shake-intensity = Screen shake intensity
-ui-options-screen-shake-percent = { TOSTRING($intensity, "P0") }
 ui-options-vsync = VSync
 ui-options-fullscreen = Fullscreen
 ui-options-lighting-label = Lighting Quality:
