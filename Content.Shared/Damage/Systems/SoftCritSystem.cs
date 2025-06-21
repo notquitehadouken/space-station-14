@@ -1,20 +1,35 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Content.Shared.Damage.Components;
+﻿using Content.Shared.Damage.Components;
 using Content.Shared.FixedPoint;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Systems;
+using Robust.Shared.Network;
+using Robust.Shared.Timing;
 
 namespace Content.Shared.Damage.Systems;
 
 public sealed class SoftCritSystem : EntitySystem
 {
     [Dependency] private readonly MobThresholdSystem _mobThreshold = default!;
+    [Dependency] private readonly INetManager _netMan = default!;
+    [Dependency] private readonly IGameTiming _timing = default!;
 
     public override void Initialize()
     {
         base.Initialize();
 
         SubscribeLocalEvent<DamageableComponent, DamageChangedEvent>(OnDamageChanged);
+        SubscribeLocalEvent<SoftCritComponent, ComponentStartup>(OnStartup);
+    }
+
+    private void OnStartup(Entity<SoftCritComponent> uid, ref ComponentStartup args)
+    {
+        if (!TryComp(uid, out DamageableComponent? damageableComponent))
+            return; // stop what you are doing and think about your mistakes
+
+        foreach (var (DamageType, DamageValue) in damageableComponent.Damage.DamageDict)
+        {
+            uid.Comp.DamageEffective.DamageDict.TryAdd(DamageType, DamageValue);
+        }
     }
 
     /// <summary>
@@ -31,9 +46,9 @@ public sealed class SoftCritSystem : EntitySystem
     /// <summary>
     ///     Calculates the amount of time it will take for this entity's DamageEffective to reach its Damage
     /// </summary>
-    private TimeSpan CalculateTimeToEffective(Entity<DamageableComponent> uid, SoftCritComponent? softCrit = null)
+    private TimeSpan CalculateTimeToEffective(Entity<DamageableComponent> uid)
     {
-        if (!Resolve(uid, ref softCrit))
+        if (!TryComp(uid, out SoftCritComponent? softCrit))
             return TimeSpan.Zero;
 
         var DeathThreshold = _mobThreshold.GetThresholdForState(uid, MobState.Dead);
@@ -74,8 +89,7 @@ public sealed class SoftCritSystem : EntitySystem
         DamageableComponent? damageableComponent = null,
         SoftCritComponent? softCrit = null)
     {
-        if (!Resolve(uid, ref damageableComponent) ||
-            !Resolve(uid, ref softCrit))
+        if (!Resolve(uid, ref damageableComponent, ref softCrit))
             return;
         foreach (var (DamageType, DamageValue) in damageableComponent.Damage.DamageDict)
         {
@@ -108,11 +122,15 @@ public sealed class SoftCritSystem : EntitySystem
     {
         softCrit.TotalDamageEffective = softCrit.DamageEffective.GetTotal();
         Dirty(uid, softCrit);
+
         RaiseLocalEvent(uid, new DamageEffectiveChangedEvent(softCrit));
     }
 
     public override void Update(float frameTime)
     {
+        if (!_timing.IsFirstTimePredicted)
+            return;
+
         var query = EntityQueryEnumerator<ActiveDamageComponent>();
 
         while (query.MoveNext(out var uid, out var _))
@@ -136,6 +154,8 @@ public sealed class SoftCritSystem : EntitySystem
                 RemoveActiveDamage(uid, damageableComponent);
                 continue;
             }
+
+            var DeltaTime = _timing.CurTick;
 
             UpdateDamageEffective(uid, frameTime / (float)TimeTo.TotalSeconds, damageableComponent, softCritComponent);
         }

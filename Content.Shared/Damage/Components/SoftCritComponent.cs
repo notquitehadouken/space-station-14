@@ -9,7 +9,7 @@ public sealed partial class SoftCritComponent : Component
     /// <summary>
     ///     The current damage used for things like state calculations
     /// </summary>
-    [DataField]
+    [DataField(readOnly: true)]
     public DamageSpecifier DamageEffective = new();
 
     [ViewVariables]

@@ -8,6 +8,7 @@ using Content.Shared.FixedPoint;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Events;
 using Robust.Shared.GameStates;
+using Robust.Shared.Timing;
 
 namespace Content.Shared.Mobs.Systems;
 
@@ -16,6 +17,7 @@ public sealed class MobThresholdSystem : EntitySystem
     [Dependency] private readonly MobStateSystem _mobStateSystem = default!;
     [Dependency] private readonly AlertsSystem _alerts = default!;
     [Dependency] private readonly SoftCritSystem _softCrit = default!;
+    [Dependency] private readonly IGameTiming _timing = default!;
 
     public override void Initialize()
     {
@@ -351,6 +353,7 @@ public sealed class MobThresholdSystem : EntitySystem
             if (TotalDamage < threshold)
                 continue;
 
+            Logger.Debug($"{TotalDamage}, {mobState}");
             TriggerThreshold(target, mobState, mobStateComponent, thresholdsComponent, origin);
             break;
         }
@@ -440,9 +443,13 @@ public sealed class MobThresholdSystem : EntitySystem
     {
         if (!TryComp<MobStateComponent>(target, out var mobState))
             return;
-        TryComp(target, out SoftCritComponent? softCritComponent);
+
         thresholds.LastOrigin = args.Origin;
-        CheckThresholds(target, mobState, thresholds, args.Damageable, softCritComponent, args.Origin);
+
+        if (HasComp<SoftCritComponent>(target))
+            return;
+
+        CheckThresholds(target, mobState, thresholds, args.Damageable, null, args.Origin);
         var ev = new MobThresholdChecked(target, mobState, thresholds, args.Damageable);
         RaiseLocalEvent(target, ref ev, true);
         UpdateAlerts(target, mobState.CurrentState, thresholds, args.Damageable);
@@ -450,6 +457,8 @@ public sealed class MobThresholdSystem : EntitySystem
 
     private void OnDamagedEffective(EntityUid target, MobThresholdsComponent thresholds, DamageEffectiveChangedEvent args)
     {
+        if (!_timing.IsFirstTimePredicted)
+            return;
         if (!TryComp<MobStateComponent>(target, out var mobState) ||
             !TryComp(target, out DamageableComponent? damageableComponent))
             return;

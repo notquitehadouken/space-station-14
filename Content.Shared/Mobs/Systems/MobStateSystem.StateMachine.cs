@@ -32,8 +32,8 @@ public partial class MobStateSystem
     {
         if (!_mobStateQuery.Resolve(entity, ref component))
             return;
-
         var ev = new UpdateMobStateEvent {Target = entity, Component = component, Origin = origin};
+
         RaiseLocalEvent(entity, ref ev);
         ChangeState(entity, component, ev.State, origin: origin);
     }
@@ -104,6 +104,8 @@ public partial class MobStateSystem
         //make sure we are allowed to enter the new state
         if (oldState == newState || !component.AllowedStates.Contains(newState))
             return;
+
+        Logger.Debug($"{ToPrettyString(target)} is changing to state {newState}, because of {origin}");
 
         OnExitState(target, component, oldState);
         component.CurrentState = newState;

@@ -128,7 +128,6 @@ public sealed class DamageOverlayUiController : UIController
             }
             case MobState.Critical:
             {
-
                 if (!_mobThresholdSystem.TryGetDeadPercentage(entity,
                         FixedPoint2.Max(0.0, softCrit?.TotalDamageEffective ?? damageable.TotalDamage), out var critLevel))
                     return;
