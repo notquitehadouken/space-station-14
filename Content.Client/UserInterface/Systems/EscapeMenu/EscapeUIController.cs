@@ -58,7 +58,7 @@ public sealed class EscapeUIController : UIController, IOnStateEntered<GameplayS
     {
         DebugTools.Assert(_escapeWindow == null);
 
-        _escapeWindow = UIManager.CreateWindow<Options.UI.EscapeMenu>();
+        _escapeWindow = UIManager.CreateFullscreen<Options.UI.EscapeMenu>();
 
         _escapeWindow.OnClose += DeactivateButton;
         _escapeWindow.OnOpen += ActivateButton;
@@ -148,7 +148,7 @@ public sealed class EscapeUIController : UIController, IOnStateEntered<GameplayS
         }
         else
         {
-            _escapeWindow.OpenCentered();
+            _escapeWindow.Open();
             EscapeButton!.Pressed = true;
         }
     }
