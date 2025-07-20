@@ -23,6 +23,12 @@ public sealed partial class AlertPrototype : IPrototype
     public List<SpriteSpecifier> Icons = new();
 
     /// <summary>
+    /// An icon used for any invalid severity
+    /// </summary>
+    [DataField]
+    public SpriteSpecifier? FallbackIcon;
+
+    /// <summary>
     /// An entity used for displaying the <see cref="Icons"/> in the UI control.
     /// </summary>
     [DataField]
@@ -105,6 +111,11 @@ public sealed partial class AlertPrototype : IPrototype
         if (severity == null)
         {
             throw new ArgumentException($"No severity specified but this alert ({AlertKey}) has severity.", nameof(severity));
+        }
+
+        if ((severity < MinSeverity || severity > MaxSeverity) && FallbackIcon is { } fallback)
+        {
+            return fallback;
         }
 
         if (severity < MinSeverity)

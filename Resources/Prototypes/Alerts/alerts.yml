@@ -202,6 +202,9 @@
     state: health3
   - sprite: /Textures/Interface/Alerts/human_alive.rsi
     state: health4
+  fallback:
+  - sprite: /Textures/Interface/Alerts/human_softcrit.rsi
+    state: softcrit
   name: alerts-health-name
   description: alerts-health-desc
   minSeverity: 0

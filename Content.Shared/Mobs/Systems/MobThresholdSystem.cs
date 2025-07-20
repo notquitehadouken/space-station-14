@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Content.Shared.Alert;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Systems;
 using Content.Shared.FixedPoint;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Events;
@@ -13,6 +14,7 @@ public sealed class MobThresholdSystem : EntitySystem
 {
     [Dependency] private readonly MobStateSystem _mobStateSystem = default!;
     [Dependency] private readonly AlertsSystem _alerts = default!;
+    [Dependency] private readonly SoftCritSystem _softCrit = default!;
 
     public override void Initialize()
     {
@@ -358,6 +360,11 @@ public sealed class MobThresholdSystem : EntitySystem
             return;
         }
 
+        if (newState != MobState.Alive && !_softCrit.CanIncapNow(target, mobState))
+        {
+            return; // suks 2 b u
+        }
+
         if (mobState.CurrentState != MobState.Dead || thresholds.AllowRevives)
         {
             thresholds.CurrentThresholdState = newState;
@@ -405,9 +412,11 @@ public sealed class MobThresholdSystem : EntitySystem
             if (TryGetNextState(target, currentMobState, out var nextState, threshold) &&
                 TryGetPercentageForState(target, nextState.Value, damageable.TotalDamage, out var percentage))
             {
-                percentage = FixedPoint2.Clamp(percentage.Value, 0, 1);
+                percentage = FixedPoint2.Max(percentage.Value, 0);
 
-                severity = (short) MathF.Round(
+                severity = percentage > 1
+                    ? (short)(_alerts.GetMaxSeverity(currentAlert) + 1)
+                    : (short) MathF.Round(
                     MathHelper.Lerp(
                         _alerts.GetMinSeverity(currentAlert),
                         _alerts.GetMaxSeverity(currentAlert),
