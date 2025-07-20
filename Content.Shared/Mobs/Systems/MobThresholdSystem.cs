@@ -14,7 +14,7 @@ public sealed class MobThresholdSystem : EntitySystem
 {
     [Dependency] private readonly MobStateSystem _mobStateSystem = default!;
     [Dependency] private readonly AlertsSystem _alerts = default!;
-    [Dependency] private readonly SoftCritSystem _softCrit = default!;
+    [Dependency] private readonly SharedSoftCritSystem _softCrit = default!;
 
     public override void Initialize()
     {
