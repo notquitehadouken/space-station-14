@@ -56,8 +56,25 @@ public sealed partial class TraitPrototype : IPrototype
     public int Cost = 0;
 
     /// <summary>
+    /// If DefaultCategory is null, then ExclusiveCategory will stand in for it.
+    /// Always set to DefaultCategory.
+    /// </summary>
+    public ProtoId<TraitCategoryPrototype>? Category
+    {
+        get => DefaultCategory ?? ExclusiveCategory;
+        set => DefaultCategory = value;
+    }
+
+    /// <summary>
     /// Adds a trait to a category, allowing you to limit the selection of some traits to the settings of that category.
     /// </summary>
+    [DataField("category")]
+    public ProtoId<TraitCategoryPrototype>? DefaultCategory;
+
+    /// <summary>
+    /// If set, then this trait can only be selected if no other traits in that category are, and if this trait
+    /// is selected then no other traits in that category can be selected
+    /// </summary>
     [DataField]
-    public ProtoId<TraitCategoryPrototype>? Category;
+    public ProtoId<TraitCategoryPrototype>? ExclusiveCategory;
 }
