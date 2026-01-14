@@ -19,6 +19,7 @@ using Content.Server.Station.Systems;
 using Content.Shared.Access.Systems;
 using Content.Shared.CCVar;
 using Content.Shared.Database;
+using Content.Shared.Destructible;
 using Content.Shared.DeviceNetwork;
 using Content.Shared.DeviceNetwork.Components;
 using Content.Shared.GameTicking;
@@ -90,6 +91,7 @@ public sealed partial class EmergencyShuttleSystem : SharedEmergencyShuttleSyste
 
         SubscribeLocalEvent<EmergencyShuttleComponent, FTLStartedEvent>(OnEmergencyFTL);
         SubscribeLocalEvent<EmergencyShuttleComponent, FTLCompletedEvent>(OnEmergencyFTLComplete);
+        SubscribeLocalEvent<EvacuationShuttleCallerComponent, DestructionEventArgs>(OnEvacCallerDestroyed);
         SubscribeNetworkEvent<EmergencyShuttleRequestPositionMessage>(OnShuttleRequestPosition);
         InitializeEmergencyConsole();
     }
@@ -254,6 +256,38 @@ public sealed partial class EmergencyShuttleSystem : SharedEmergencyShuttleSyste
 
             _deviceNetworkSystem.QueuePacket(shuttle, null, payload, net.TransmitFrequency);
         }
+    }
+
+    /// <summary>
+    ///     When something capable of calling evac is destroyed, like being thrown into singulo or being incinerated.
+    ///     If the last thing that can call/recall evac is destroyed, it calls evac.
+    /// </summary>
+    private void OnEvacCallerDestroyed(Entity<EvacuationShuttleCallerComponent> uid, ref DestructionEventArgs args)
+    {
+        if (!_emergencyShuttleEnabled)
+            return;
+
+        if (_roundEnd.IsRoundEndRequested())
+            return;
+
+        var evacuatorQuery = EntityQueryEnumerator<EvacuationShuttleCallerComponent>();
+        var evacuatorsFound = false;
+
+        while (evacuatorQuery.MoveNext(out var evacuator, out var comp))
+        {
+            if (evacuator == uid.Owner)
+                continue;
+
+            evacuatorsFound = true;
+            break;
+        }
+
+        if (evacuatorsFound)
+            return;
+
+        // Nothing is left that can call evac, so we will now call it for the station.
+
+        _roundEnd.RequestRoundEnd(text: "round-end-system-shuttle-no-callers-autocall-announcement");
     }
 
     /// <summary>
