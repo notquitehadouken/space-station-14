@@ -15,6 +15,9 @@
     },
     {
       "name": "melee_sight"
+    },
+    {
+      "name": "melee_parry_sight"
     }
   ]
 }

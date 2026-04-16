@@ -54,6 +54,18 @@ public sealed partial class ReflectComponent : Component
     /// </summary>
     [DataField]
     public SoundSpecifier? SoundOnReflect = new SoundPathSpecifier("/Audio/Weapons/Guns/Hits/laser_sear_wall.ogg", AudioParams.Default.WithVariation(0.05f));
+
+    /// <summary>
+    /// Whether to hide the examine text for reflecting items.
+    /// </summary>
+    [DataField]
+    public bool HideExamine = false;
+
+    /// <summary>
+    /// The loc string to show when something is reflected.
+    /// </summary>
+    [DataField]
+    public string? ReflectPopup = "reflect-shot";
 }
 
 /// <summary>

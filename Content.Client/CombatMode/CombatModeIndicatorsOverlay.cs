@@ -67,18 +67,30 @@ public sealed class CombatModeIndicatorsOverlay : Overlay
         if (mousePosMap.MapId != args.MapId)
             return;
 
-        var handEntity = _hands.GetActiveHandEntity();
-        var isHandGunItem = _entMan.HasComponent<GunComponent>(handEntity);
-        var isGunBolted = true;
-        if (_entMan.TryGetComponent(handEntity, out ChamberMagazineAmmoProviderComponent? chamber))
-            isGunBolted = chamber.BoltClosed ?? true;
+        Texture sight;
 
+        var ev = new QueryCombatReticleEvent();
+        _entMan.EventBus.RaiseEvent(EventSource.Local, ev);
 
-        var mousePos = mouseScreenPosition.Position;
         var uiScale = (args.ViewportControl as Control)?.UIScale ?? 1f;
+        var mousePos = mouseScreenPosition.Position;
         var limitedScale = uiScale > 1.25f ? 1.25f : uiScale;
 
-        var sight = isHandGunItem ? (isGunBolted ? _gunSight : _gunBoltSight) : _meleeSight;
+        if (ev.Texture is {})
+        {
+            sight = ev.Texture!;
+        }
+        else
+        {
+            var handEntity = _hands.GetActiveHandEntity();
+            var isHandGunItem = _entMan.HasComponent<GunComponent>(handEntity);
+            var isGunBolted = true;
+            if (_entMan.TryGetComponent(handEntity, out ChamberMagazineAmmoProviderComponent? chamber))
+                isGunBolted = chamber.BoltClosed ?? true;
+
+            sight = isHandGunItem ? (isGunBolted ? _gunSight : _gunBoltSight) : _meleeSight;
+        }
+
         DrawSight(sight, args.ScreenHandle, mousePos, limitedScale * Scale);
     }
 
