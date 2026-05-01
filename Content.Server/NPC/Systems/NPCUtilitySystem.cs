@@ -28,6 +28,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 using Content.Shared.Atmos.Components;
 using System.Linq;
+using Content.Server.Transporters.Components;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Mobs.Components;
@@ -574,6 +575,26 @@ public sealed class NPCUtilitySystem : EntitySystem
                     if (!_puddleQuery.TryGetComponent(ent, out var puddleComp) ||
                         !_solutions.TryGetSolution(ent, puddleComp.SolutionName, out _, out var sol) ||
                         _puddle.CanFullyEvaporate(sol))
+                    {
+                        _entityList.Add(ent);
+                    }
+                }
+
+                foreach (var ent in _entityList)
+                {
+                    entities.Remove(ent);
+                }
+
+                break;
+            }
+            case ProviderFilter:
+            {
+                _entityList.Clear();
+
+                foreach (var ent in entities)
+                {
+                    if (!TryComp<TransporterProviderComponent>(ent, out var comp)
+                        || !comp.AnyToSend)
                     {
                         _entityList.Add(ent);
                     }

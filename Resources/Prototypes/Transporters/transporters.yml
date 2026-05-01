@@ -1,0 +1,136 @@
+﻿- type: entity
+  parent: BaseMob
+  id: Transporter
+  name: transporter
+  description: A simple robot capable of carrying items from place to place.
+  components:
+  - type: Sprite
+    noRot: true
+    drawdepth: BelowMobs
+    sprite: Mobs/Silicon/transporter.rsi
+    layers:
+    - state: icon
+    - state: light
+      shader: unshaded
+      map: ["light"]
+      visible: false
+  - type: HTN
+    rootTask:
+      task: TransporterCompound
+  - type: Transporter
+  - type: GenericVisualizer
+    visuals:
+      enum.TransporterVisualLayers.Light:
+        light:
+          NoBattery: { visible: false }
+          NoCharge: { visible: true, color: "#FF0000" }
+          LowCharge: { visible: true, color: "#FF9F00" }
+          Charging: { visible: true, color: "#007FFF" }
+          Waiting: { visible: true, color: "#FFFF00" }
+          Moving: { visible: true, color: "#00FF00" }
+  - type: Pullable
+  - type: Appearance
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.5, -0.5, 0.5, 0.5"
+        density: 10
+        mask:
+        - SmallMobMask
+        layer:
+        - SmallMobLayer
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 100
+      behaviors:
+      - !type:DoActsBehavior
+  - type: PowerCellSlot
+    cellSlotId: cell_slot
+  - type: ContainerContainer
+    containers:
+      item: !type:ContainerSlot {}
+      cell_slot: !type:ContainerSlot {}
+  - type: ItemSlots
+    slots:
+      cell_slot:
+        name: power-cell-slot-component-slot-name-default
+
+- type: entity
+  parent: [ BaseMachinePowered, ConstructibleMachine ]
+  id: TransporterProvider
+  name: transporter provider
+  description: oooh im providing
+  components:
+  - type: Sprite
+    sprite: Structures/Transporters/transporter_provider.rsi
+    layers:
+    - state: icon
+    snapCardinals: true
+  - type: TransporterProvider
+  - type: TransporterCharger
+
+- type: entity
+  parent: [ BaseMachinePowered, ConstructibleMachine ]
+  id: TransporterRequester
+  name: transporter requester
+  description: oooh im providing
+  components:
+  - type: Sprite
+    sprite: Structures/Transporters/transporter_requester.rsi
+    layers:
+    - state: icon
+    snapCardinals: true
+  - type: TransporterRequester
+  - type: TransporterCharger
+
+- type: htnCompound
+  id: FindProvider
+  branches:
+  - tasks:
+    - !type:HTNPrimitiveTask
+      operator: !type:UtilityOperator
+        proto: NearbyTransporterProvider
+    - !type:HTNPrimitiveTask
+      operator: !type:MoveToOperator
+        pathfindInPlanning: true
+        removeKeyOnFinish: false
+        targetKey: TargetCoordinates
+        pathfindKey: TargetPathfind
+        rangeKey: InteractRange
+
+- type: htnCompound
+  id: FindCharger
+  branches:
+  - tasks:
+    - !type:HTNPrimitiveTask
+      operator: !type:UtilityOperator
+        proto: NearbyTransporterProvider
+    - !type:HTNPrimitiveTask
+      operator: !type:MoveToOperator
+        pathfindInPlanning: true
+        removeKeyOnFinish: false
+        targetKey: TargetCoordinates
+        pathfindKey: TargetPathfind
+        rangeKey: InteractRange
+    - !type:HTNPrimitiveTask
+      operator: !type:StartChargingOperator
+
+
+- type: htnCompound
+  id: TransporterCompound
+  branches:
+  - preconditions:
+    - !type:AvailableProviderPrecondition
+    tasks:
+    - !type:HTNCompoundTask
+      task: FindProvider
+  - preconditions:
+    - !type:AvailableProviderPrecondition
+      invert: true # Since we couldn't find any providers, we'll just charge.
+    tasks:
+    - !type:HTNCompoundTask
+      task: FindCharger
