@@ -115,8 +115,13 @@
   id: Hologram
   kind: source
   path: "/Textures/Shaders/hologram.swsl"
-  
+
 - type: shader
   id: HeatBlur
   kind: source
   path: "/Textures/Shaders/heatBlur.swsl"
+
+- type: shader # ooooh i'm factorio fan i put cool placement effect in spaise game
+  id: PlacementGhost
+  kind: source
+  path: "/Textures/Shaders/placement_ghost.swsl"

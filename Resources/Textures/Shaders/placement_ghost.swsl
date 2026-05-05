@@ -1,0 +1,8 @@
+﻿light_mode unshaded;
+
+// uniform highp float texHeight;
+// uniform highp float timeOffset; // Random number assigned per-entity just so every ghost doesn't move in the same way.
+
+void fragment() {
+    COLOR = zTexture(UV);
+}

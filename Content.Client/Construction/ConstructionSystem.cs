@@ -8,7 +8,9 @@ using Content.Shared.Input;
 using Content.Shared.Wall;
 using JetBrains.Annotations;
 using Robust.Client.GameObjects;
+using Robust.Client.Graphics;
 using Robust.Client.Player;
+using Robust.Client.Prototypes;
 using Robust.Shared.Input;
 using Robust.Shared.Input.Binding;
 using Robust.Shared.Map;
@@ -27,6 +29,7 @@ namespace Content.Client.Construction
         [Dependency] private readonly IPlayerManager _playerManager = default!;
         [Dependency] private readonly ExamineSystemShared _examineSystem = default!;
         [Dependency] private readonly SharedTransformSystem _transformSystem = default!;
+        [Dependency] private readonly ClientPrototypeManager _protoMan = default!;
         [Dependency] private readonly SpriteSystem _sprite = default!;
         [Dependency] private readonly PopupSystem _popupSystem = default!;
 
@@ -34,6 +37,8 @@ namespace Content.Client.Construction
         private readonly Dictionary<string, ConstructionGuide> _guideCache = new();
 
         private readonly Dictionary<string, string> _recipesMetadataCache = [];
+
+        private readonly ProtoId<ShaderPrototype> _shaderId = "PlacementGhost";
 
         public bool CraftingEnabled { get; private set; }
 
@@ -317,6 +322,9 @@ namespace Content.Client.Construction
             else
                 return false;
 
+            var shader = _protoMan.Index(_shaderId).Instance();
+
+            sprite.PostShader = shader;
             _sprite.SetColor((ghost.Value, sprite), new Color(48, 255, 48, 128));
 
             if (prototype.CanBuildInImpassable)
