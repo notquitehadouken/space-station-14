@@ -28,6 +28,7 @@ public sealed class ClothingSpeedModifierSystem : EntitySystem
         SubscribeLocalEvent<ClothingSpeedModifierComponent, InventoryRelayedEvent<RefreshMovementSpeedModifiersEvent>>(OnRefreshMoveSpeed);
         SubscribeLocalEvent<ClothingSpeedModifierComponent, GetVerbsEvent<ExamineVerb>>(OnClothingVerbExamine);
         SubscribeLocalEvent<ClothingSpeedModifierComponent, ItemToggledEvent>(OnToggled);
+
     }
 
     private void OnGetState(EntityUid uid, ClothingSpeedModifierComponent component, ref ComponentGetState args)

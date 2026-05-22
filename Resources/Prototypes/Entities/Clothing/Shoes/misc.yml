@@ -172,6 +172,34 @@
     event: !type:ToggleActionEvent
 
 - type: entity
+  parent: [ ClothingShoesBase, BaseToggleClothing, BaseSyndicateContraband ]
+  id: ClothingShoesBootsHotFoot
+  name: hotfoot boots
+  description: The syndicate's take on the NT speed boots. Unfortunately, they chose coal as fuel, and then skimped out on their asbestos budget, so they'll irreversibly melt to the soles of your feet as soon as you activate them.
+  components:
+  - type: Sprite
+    sprite: Clothing/Shoes/Boots/hotfootboots.rsi
+    layers:
+    - state: icon
+    - state: icon-heat0
+      map: ["icon-heat"]
+  - type: Clothing
+    sprite: Clothing/Shoes/Boots/hotfootboots.rsi
+
+
+- type: entity
+  parent: BaseAction
+  id: ActionIncreaseHeatHotFootBoots
+  name: Turn up the heat
+  description: More speed, more damage. There is no way to reverse this.
+  components:
+  - type: Action
+    delay: 3
+    itemIconStyle: BigItem
+  - type: InstantAction
+    event: !type:
+
+- type: entity
   parent: ClothingShoesBase
   id: ClothingShoesBootsMoon
   name: moon boots
