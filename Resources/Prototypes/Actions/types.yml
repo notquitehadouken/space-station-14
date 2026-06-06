@@ -506,3 +506,12 @@
   - type: Action
     icon: { sprite: Interface/Actions/voice-mask.rsi, state: icon }
     itemIconStyle: BigAction
+
+- type: entity
+  parent: BaseToggleImplant
+  id: ActionToggleActiveCamouflageImplant
+  components:
+  - type: Action
+    icon: Interface/Actions/activecamouflage.png
+    iconOn: Interface/Actions/activecamouflage.png
+    itemIconStyle: NoItem

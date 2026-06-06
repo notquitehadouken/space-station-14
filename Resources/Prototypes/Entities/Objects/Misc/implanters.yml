@@ -265,6 +265,14 @@
   - type: Implanter
     implant: VoiceMaskImplant
 
+- type: entity
+  id: ActiveCamouflageImplanter
+  name: active camouflage implanter
+  parent: BaseImplantOnlyImplanterSyndi
+  components:
+  - type: Implanter
+    implant: VoiceMaskImplant
+
 #Nuclear Operative/Special implanters
 
 - type: entity

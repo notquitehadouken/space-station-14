@@ -257,6 +257,19 @@
     tags:
     - SubdermalImplant
 
+- type: entity
+  parent: BaseSubdermalImplant
+  id: ActiveCamouflageImplant
+  name: active camouflage implant
+  description: This implant lets you turn invisible, at the cost of heating you up rapidly if you use it for too long.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: SubdermalImplant
+    implantAction: ActionToggleActiveCamouflageImplant
+  - type: Tag
+    tags:
+    - SubdermalImplant
+
 #Nuclear Operative/Special Exclusive implants
 
 - type: entity
