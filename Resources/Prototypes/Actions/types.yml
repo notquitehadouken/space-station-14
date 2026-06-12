@@ -508,10 +508,17 @@
     itemIconStyle: BigAction
 
 - type: entity
-  parent: BaseToggleImplant
+  parent: BaseToggleAction
   id: ActionToggleActiveCamouflageImplant
+  name: Active camouflage
+  description: Disappear instantly! Beware extended use.
   components:
   - type: Action
-    icon: Interface/Actions/activecamouflage.png
-    iconOn: Interface/Actions/activecamouflage.png
+    icon:
+      sprite: Actions/Implants/implants.rsi
+      state: activecamouflage
+    iconOn:
+      sprite: Actions/Implants/implants.rsi
+      state: activecamouflage
     itemIconStyle: NoItem
+    raiseOnUser: true

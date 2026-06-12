@@ -271,7 +271,7 @@
   parent: BaseImplantOnlyImplanterSyndi
   components:
   - type: Implanter
-    implant: VoiceMaskImplant
+    implant: ActiveCamouflageImplant
 
 #Nuclear Operative/Special implanters
 

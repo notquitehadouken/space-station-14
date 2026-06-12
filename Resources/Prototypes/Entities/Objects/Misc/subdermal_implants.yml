@@ -266,6 +266,8 @@
   components:
   - type: SubdermalImplant
     implantAction: ActionToggleActiveCamouflageImplant
+  - type: ActiveCamouflage
+
   - type: Tag
     tags:
     - SubdermalImplant
