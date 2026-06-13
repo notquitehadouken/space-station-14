@@ -194,8 +194,8 @@ public sealed partial class GuideReagentReaction : BoxContainer, ISearchableCont
         var mixingVerb = ContentLocalizationManager.FormatList(mixingCategories
             .Select(p => Loc.GetString(p.VerbText)).ToList());
 
-        var minTemp = prototype?.MinimumTemperature ?? 0;
-        var maxTemp = prototype?.MaximumTemperature ?? float.PositiveInfinity;
+        var minTemp = prototype?.MinimumTemperatureInclusive ?? 0;
+        var maxTemp = prototype?.MaximumTemperatureInclusive ?? float.PositiveInfinity;
         var text = Loc.GetString("guidebook-reagent-recipes-mix-info",
             ("verb", mixingVerb),
             ("minTemp", minTemp),

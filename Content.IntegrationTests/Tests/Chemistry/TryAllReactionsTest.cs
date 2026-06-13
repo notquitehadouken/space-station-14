@@ -62,7 +62,7 @@ namespace Content.IntegrationTests.Tests.Chemistry
                             id,
                             reactant.Amount,
                             out var quantity,
-                            reactionPrototype.MinimumTemperature));
+                            reactionPrototype.MinimumTemperatureInclusive));
                     Assert.That(reactant.Amount, Is.EqualTo(quantity));
 #pragma warning restore NUnit2045
                 }
@@ -73,10 +73,10 @@ namespace Content.IntegrationTests.Tests.Chemistry
                     .ToList();
 
                 //Check if the reaction is the first to occur when heated
-                foreach (var possibleReaction in possibleReactions.OrderBy(r => r.MinimumTemperature))
+                foreach (var possibleReaction in possibleReactions.OrderBy(r => r.MinimumTemperatureInclusive))
                 {
                     if (possibleReaction.Priority >= reactionPrototype.Priority &&
-                        possibleReaction.MinimumTemperature < reactionPrototype.MinimumTemperature &&
+                        possibleReaction.MinimumTemperatureInclusive < reactionPrototype.MinimumTemperatureInclusive &&
                         possibleReaction.MixingCategories == reactionPrototype.MixingCategories)
                     {
                         Assert.Fail(
@@ -85,10 +85,10 @@ namespace Content.IntegrationTests.Tests.Chemistry
                 }
 
                 //Check if the reaction is the first to occur when freezing
-                foreach (var possibleReaction in possibleReactions.OrderBy(r => r.MaximumTemperature))
+                foreach (var possibleReaction in possibleReactions.OrderBy(r => r.MaximumTemperatureInclusive))
                 {
                     if (possibleReaction.Priority >= reactionPrototype.Priority &&
-                        possibleReaction.MaximumTemperature > reactionPrototype.MaximumTemperature &&
+                        possibleReaction.MaximumTemperatureInclusive > reactionPrototype.MaximumTemperatureInclusive &&
                         possibleReaction.MixingCategories == reactionPrototype.MixingCategories)
                     {
                         Assert.Fail(
@@ -97,7 +97,7 @@ namespace Content.IntegrationTests.Tests.Chemistry
                 }
 
                     //Now safe set the temperature and mix the reagents
-                    solutionContainerSystem.SetTemperature(solutionEnt.Value, reactionPrototype.MinimumTemperature);
+                    solutionContainerSystem.SetTemperature(solutionEnt.Value, reactionPrototype.MinimumTemperatureInclusive);
                     solutionContainerSystem.SetCanReact(solutionEnt.Value, true);
 
                 if (reactionPrototype.MixingCategories != null)

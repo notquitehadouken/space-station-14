@@ -102,12 +102,12 @@ namespace Content.Shared.Chemistry.Reaction
             var solution = soln.Comp.Solution;
 
             lowestUnitReactions = FixedPoint2.MaxValue;
-            if (solution.Temperature < reaction.MinimumTemperature)
+            if (solution.Temperature < reaction.MinimumTemperatureInclusive)
             {
                 lowestUnitReactions = FixedPoint2.Zero;
                 return false;
             }
-            if (solution.Temperature > reaction.MaximumTemperature)
+            if (solution.Temperature > reaction.MaximumTemperatureInclusive)
             {
                 lowestUnitReactions = FixedPoint2.Zero;
                 return false;
